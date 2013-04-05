@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{natbib}
+\bibliographystyle{/media/TOSHIBA/mgencer/PostDocPublications/chicago.bst}
+\begin{document}
+\title{Event Network Visualization}
+\author{Mehmet Gençer}
+\date{}
+\maketitle
+
+\section{Model}
+An event network is represented with a multiplex graph, $N=(V,E)$, consisting of a vertex set representing actors, $V=\left\{v_1, v_2, \cdots, v_n\right\}$, and a time ordered set of dyadic events, $E=\left\{e_1, e_2, \cdots, e_m\right\}$. Each event, $e_k$, is represented with the two vertices between which the event takes place, its time, and its weight: $e_k=(v_i, v_j, t, w)$. This event definition ignores the direction information about the event. 
+
+For convenience we define some functions to extract event information as: $t(e)$ (time of event), $w(e)$ (weight of event), $s(e)$ (source -first- vertex), and $d(e)$ (destination -second- vertex). Also for an event network we define function $T_s(N)$ as time of the first event (i.e. $t(e_1)$), $T_e(N)$ as time of the last event (i.e. $t(e_m)$). Thus the time span of the event network is found as $T(G)=T_e(G)-T_s(G)=t(e_m)-t(e_1)$.
+
+\subsection{Event decay}
+Events are observed at discrete time instances. Consider, for example, an e-mail group communication. The events are instantaneous but actors have lasting memory of events. However, impact of an event deteriorates as time passes. For this reason one can compute strength of relation between two actors as one which decays in time \citep{Brandes2009}. Such a relation is revived when new events take place between actors. Assuming a decay function, $d(e,t): E,R \to R$, one can compute strength of relation between two actors at a given time as:
+\[ r(v_i,v_j,t)=\sum_{e_k \in E, t(e_k)<=t, \left\{s(e_k),d(e_k)\right\} \equiv \left\{v_i, v_j\right\} }{d(e_k,t)}\]
+Note that the relation strength defined above ignores the direction of events, as it is intended to produce a measure of how close the vertices must be placed ,in visualization.
+
+A decay function such as exponential decay would be appropriate for use in this computation: 
+\[d(e,t)=\left\{ \begin{array}{ll} 0 & \textrm{if $t<t(e)$} \\ w(e) e^{-D (t-t(e))} & \textrm{if $t\ge t(e)$}\end{array}\right.\]
+Here, $D$ is a decay constant which must be chosen according to time resolution, and possibly considering time span of the event network. Since $d(.)$ is a "memory-less" function, the above formulation can be easily computed in practice, using an algorithm which updates relation strength as events arrive.
+
+In practice one would also need to have effect of events to disappear after some decay. This is not only compatible with actors' experiences, but also promises a visual quality improvement: inactive actors will be detached from the network and thus can be removed from visualization with an appropriate algorithm. Thus a decay function which satisfies this requirements can be described as follows:
+\[
+d(e,t)=\left\{ \begin{array}{ll} 
+ 0 & \textrm{if $t<t(e)$} \\
+ w(e) e^{-D (t-t(e))} & \textrm{if $t\ge t(e)$ and $w(e) e^{-D (t-t(e))} > D'$} \\ 
+ 0 & \textrm{if $t\ge t(e)$ and $w(e) e^{-D (t-t(e))} \le D'$} 
+ \end{array}\right. \]
+where $D'$ is a treshold value.
+
+\subsection{Spring model}
+We adopt the force calculation scheme of Fruchterman and Reingold \citeyearpar{Fruchterman}. However, animation of an event network through time needs to visually indicate how relations deteriorate or get stronger. In order to use relation strength, we use the attractive and repulsive forces between two vertices as follows, where $p_i$ and $p_j$ indicates positions of vertices and $s_{ij}=||p_i-p_j||$ represents their separation:
+\[f_a(t,v_i,v_j)=\frac{s_{ij}^2 r(v_i,v_j,t)}{k}\]
+\[f_r(t,v_i,v_j)=-\frac{k^2}{s_{ij}}\]
+Where the constant $k$ must be chosen for quality of visualization. However, Fruchterman and Reingold's choice of $k=C\sqrt{\frac{\textrm{area}}{n}}$ is not applicable here since event network starts empty, number of vertices may be unknown (i.e. when visualizing in real time), and number of active vertices at any given time may be highly variable. WHAT TO DO???
+
+This formulation assumes an ideal distance between related vertices as $\frac{1}{k/r(v_i,v_j,t)}$, unlike Fruchterman and Reingold. Therefore the attractive and repulsive forces cancel each other at the ideal distance of $\frac{k}{\sqrt[3]{s_{ij}}}$. TOO UNINDICATIVE??
+
+\subsection{Algorithm}
+Animation of an event network is different from graph visualization problems where algorithms run against a stable graph structure. In our problem current state of the network must be visualized through incremental changes to its form in the previous time moment, while network events arrive.
+\bibliography{/media/TOSHIBA/mgencer/PostDocPublications/LiteratureJabRef}
+\end{document}
+

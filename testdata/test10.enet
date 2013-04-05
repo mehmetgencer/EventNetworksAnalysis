@@ -1,0 +1,25 @@
+network> "name":"test 10"
+node> "id":1, "name":"a"
+node> "id":2, "name":"b"
+node> "id":3, "name":"c"
+node> "id":4, "name":"d"
+node> "id":5, "name":"e"
+node> "id":6, "name":"f"
+node> "id":7, "name":"g"
+node> "id":8, "name":"h"
+node> "id":9, "name":"i"
+node> "id":10, "name":"j"
+event> "src":1, "dst":2, "time":1
+event> "src":3, "dst":2, "time":2
+event> "src":3, "dst":4, "time":3
+event> "src":5, "dst":4, "time":4
+event> "src":6, "dst":7, "time":5
+event> "src":8, "dst":7, "time":6
+event> "src":8, "dst":9, "time":7
+event> "src":9, "dst":10, "time":8
+event> "src":10, "dst":8, "time":9
+event> "src":8, "dst":9, "time":10
+event> "src":3, "dst":5, "time":11
+event> "src":1, "dst":2, "time":12
+event> "src":7, "dst":10, "time":13
+event> "src":2, "dst":4, "time":14
